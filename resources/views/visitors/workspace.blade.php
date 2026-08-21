@@ -108,6 +108,8 @@
 
     @include('knowledge._panel', ['visitor' => $visitor, 'knowledgeItems' => $knowledgeItems])
 
+    @include('purchases._panel', ['visitor' => $visitor, 'purchases' => $purchases])
+
     <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
         <div class="card p-4 text-center">
             <div class="text-2xl font-bold text-ink-900">0</div>

@@ -6,6 +6,7 @@ use App\Communication\Services\CommunicationService;
 use App\Http\Controllers\Controller;
 use App\Knowledge\Services\KnowledgeService;
 use App\Models\User;
+use App\Purchase\Services\PurchaseService;
 use App\Relationships\Services\RelationshipService;
 use App\Timeline\Services\TimelineService;
 use App\Visitors\Services\VisitorService;
@@ -20,7 +21,8 @@ class VisitorController extends Controller
         private TimelineService $timelineService,
         private VisitService $visitService,
         private CommunicationService $communicationService,
-        private KnowledgeService $knowledgeService
+        private KnowledgeService $knowledgeService,
+        private PurchaseService $purchaseService
     ) {}
 
     public function index(Request $request)
@@ -95,7 +97,12 @@ class VisitorController extends Controller
             auth()->user()->tenant_id
         );
 
-        return view('visitors.workspace', compact('visitor', 'relationship', 'marketers', 'timelineEvents', 'visits', 'communications', 'knowledgeItems'));
+        $purchases = $this->purchaseService->getPurchasesForVisitor(
+            $vin,
+            auth()->user()->tenant_id
+        );
+
+        return view('visitors.workspace', compact('visitor', 'relationship', 'marketers', 'timelineEvents', 'visits', 'communications', 'knowledgeItems', 'purchases'));
     }
 
     public function edit(string $vin)

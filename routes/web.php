@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\SystemTagController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Communication\CommunicationController;
 use App\Http\Controllers\Knowledge\KnowledgeItemController;
+use App\Http\Controllers\Purchase\PurchaseController;
 use App\Http\Controllers\Relationship\RelationshipController;
 use App\Http\Controllers\Timeline\TimelineController;
 use App\Http\Controllers\Visit\ParticipantController;
@@ -105,6 +106,15 @@ Route::delete('knowledge-items/{itemId}/share/{vin}', [KnowledgeItemController::
 
 Route::get('visitors/{vin}/knowledge', [KnowledgeItemController::class, 'visitorKnowledge'])
     ->name('visitors.knowledge.index');
+
+Route::get('visitors/{vin}/purchases', [PurchaseController::class, 'index'])
+    ->name('visitors.purchases.index');
+
+Route::post('visitors/{vin}/purchases', [PurchaseController::class, 'store'])
+    ->name('visitors.purchases.store');
+
+Route::get('visitors/{vin}/purchases/{purchaseId}', [PurchaseController::class, 'show'])
+    ->name('visitors.purchases.show');
 
 Route::get('visitors/{vin}/timeline', [TimelineController::class, 'index'])
     ->name('visitors.timeline.index');
