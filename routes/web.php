@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\SystemTagController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Communication\CommunicationController;
 use App\Http\Controllers\Relationship\RelationshipController;
 use App\Http\Controllers\Timeline\TimelineController;
 use App\Http\Controllers\Visit\ParticipantController;
@@ -76,6 +77,15 @@ Route::get('visitors/{vin}/visits/{visitId}', [VisitController::class, 'show'])
 
 Route::post('participants/{participantId}/promote', [ParticipantController::class, 'promote'])
     ->name('participants.promote');
+
+Route::get('visitors/{vin}/communications', [CommunicationController::class, 'index'])
+    ->name('visitors.communications.index');
+
+Route::post('visitors/{vin}/communications', [CommunicationController::class, 'store'])
+    ->name('visitors.communications.store');
+
+Route::get('visitors/{vin}/communications/{communicationId}', [CommunicationController::class, 'show'])
+    ->name('visitors.communications.show');
 
 Route::get('visitors/{vin}/timeline', [TimelineController::class, 'index'])
     ->name('visitors.timeline.index');

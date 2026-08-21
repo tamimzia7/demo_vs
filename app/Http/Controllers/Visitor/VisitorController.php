@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Visitor;
 
+use App\Communication\Services\CommunicationService;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Relationships\Services\RelationshipService;
@@ -16,7 +17,8 @@ class VisitorController extends Controller
         private VisitorService $visitorService,
         private RelationshipService $relationshipService,
         private TimelineService $timelineService,
-        private VisitService $visitService
+        private VisitService $visitService,
+        private CommunicationService $communicationService
     ) {}
 
     public function index(Request $request)
@@ -81,7 +83,12 @@ class VisitorController extends Controller
             auth()->user()->tenant_id
         );
 
-        return view('visitors.workspace', compact('visitor', 'relationship', 'marketers', 'timelineEvents', 'visits'));
+        $communications = $this->communicationService->getCommunicationsForVisitor(
+            $vin,
+            auth()->user()->tenant_id
+        );
+
+        return view('visitors.workspace', compact('visitor', 'relationship', 'marketers', 'timelineEvents', 'visits', 'communications'));
     }
 
     public function edit(string $vin)
