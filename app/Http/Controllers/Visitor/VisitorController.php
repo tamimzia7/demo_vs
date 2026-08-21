@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Visitor;
 
 use App\Communication\Services\CommunicationService;
 use App\Http\Controllers\Controller;
+use App\Knowledge\Services\KnowledgeService;
 use App\Models\User;
 use App\Relationships\Services\RelationshipService;
 use App\Timeline\Services\TimelineService;
@@ -18,7 +19,8 @@ class VisitorController extends Controller
         private RelationshipService $relationshipService,
         private TimelineService $timelineService,
         private VisitService $visitService,
-        private CommunicationService $communicationService
+        private CommunicationService $communicationService,
+        private KnowledgeService $knowledgeService
     ) {}
 
     public function index(Request $request)
@@ -88,7 +90,12 @@ class VisitorController extends Controller
             auth()->user()->tenant_id
         );
 
-        return view('visitors.workspace', compact('visitor', 'relationship', 'marketers', 'timelineEvents', 'visits', 'communications'));
+        $knowledgeItems = $this->knowledgeService->getItemsSharedWithVisitor(
+            $vin,
+            auth()->user()->tenant_id
+        );
+
+        return view('visitors.workspace', compact('visitor', 'relationship', 'marketers', 'timelineEvents', 'visits', 'communications', 'knowledgeItems'));
     }
 
     public function edit(string $vin)

@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\SystemTagController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Communication\CommunicationController;
+use App\Http\Controllers\Knowledge\KnowledgeItemController;
 use App\Http\Controllers\Relationship\RelationshipController;
 use App\Http\Controllers\Timeline\TimelineController;
 use App\Http\Controllers\Visit\ParticipantController;
@@ -86,6 +87,24 @@ Route::post('visitors/{vin}/communications', [CommunicationController::class, 's
 
 Route::get('visitors/{vin}/communications/{communicationId}', [CommunicationController::class, 'show'])
     ->name('visitors.communications.show');
+
+Route::get('knowledge-items', [KnowledgeItemController::class, 'index'])
+    ->name('knowledge-items.index');
+
+Route::post('knowledge-items', [KnowledgeItemController::class, 'store'])
+    ->name('knowledge-items.store');
+
+Route::get('knowledge-items/{itemId}', [KnowledgeItemController::class, 'show'])
+    ->name('knowledge-items.show');
+
+Route::post('knowledge-items/{itemId}/share', [KnowledgeItemController::class, 'share'])
+    ->name('knowledge-items.share');
+
+Route::delete('knowledge-items/{itemId}/share/{vin}', [KnowledgeItemController::class, 'revoke'])
+    ->name('knowledge-items.revoke');
+
+Route::get('visitors/{vin}/knowledge', [KnowledgeItemController::class, 'visitorKnowledge'])
+    ->name('visitors.knowledge.index');
 
 Route::get('visitors/{vin}/timeline', [TimelineController::class, 'index'])
     ->name('visitors.timeline.index');
