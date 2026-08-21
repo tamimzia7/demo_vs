@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\SystemTagController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Communication\CommunicationController;
+use App\Http\Controllers\Investment\ExpenseController;
 use App\Http\Controllers\Knowledge\KnowledgeItemController;
 use App\Http\Controllers\Purchase\PurchaseController;
 use App\Http\Controllers\Relationship\RelationshipController;
@@ -115,6 +116,12 @@ Route::post('visitors/{vin}/purchases', [PurchaseController::class, 'store'])
 
 Route::get('visitors/{vin}/purchases/{purchaseId}', [PurchaseController::class, 'show'])
     ->name('visitors.purchases.show');
+
+Route::get('visitors/{vin}/expenses', [ExpenseController::class, 'index'])
+    ->name('visitors.expenses.index');
+
+Route::post('visitors/{vin}/expenses', [ExpenseController::class, 'store'])
+    ->name('visitors.expenses.store');
 
 Route::get('visitors/{vin}/timeline', [TimelineController::class, 'index'])
     ->name('visitors.timeline.index');

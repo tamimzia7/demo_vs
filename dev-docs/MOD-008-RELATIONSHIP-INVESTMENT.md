@@ -1,7 +1,7 @@
 # MOD-008 — Relationship Investment
 
 > **Type:** Module Implementation Record (development-facing)
-> **Status:** NOT_STARTED · **Compiled:** 2026-08-18
+> **Status:** PROTOTYPE_IMPLEMENTED · **Compiled:** 2026-08-18
 > Source documents remain authoritative; nothing here invents business rules.
 > **Caution:** No dedicated expense PROC exists yet — several expected behaviors
 > below are Open Questions (see §F and §Open Questions).
