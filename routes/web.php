@@ -4,6 +4,8 @@ use App\Http\Controllers\Admin\SystemTagController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Relationship\RelationshipController;
 use App\Http\Controllers\Timeline\TimelineController;
+use App\Http\Controllers\Visit\ParticipantController;
+use App\Http\Controllers\Visit\VisitController;
 use App\Http\Controllers\Visitor\VisitorController;
 use Illuminate\Support\Facades\Route;
 
@@ -62,6 +64,18 @@ Route::post('visitors/{vin}/relationships/approve', [RelationshipController::cla
 
 Route::post('visitors/{vin}/relationships/reject', [RelationshipController::class, 'reject'])
     ->name('visitors.relationships.reject');
+
+Route::get('visitors/{vin}/visits', [VisitController::class, 'index'])
+    ->name('visitors.visits.index');
+
+Route::post('visitors/{vin}/visits', [VisitController::class, 'store'])
+    ->name('visitors.visits.store');
+
+Route::get('visitors/{vin}/visits/{visitId}', [VisitController::class, 'show'])
+    ->name('visitors.visits.show');
+
+Route::post('participants/{participantId}/promote', [ParticipantController::class, 'promote'])
+    ->name('participants.promote');
 
 Route::get('visitors/{vin}/timeline', [TimelineController::class, 'index'])
     ->name('visitors.timeline.index');

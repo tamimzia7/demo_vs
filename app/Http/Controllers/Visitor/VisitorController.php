@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Relationships\Services\RelationshipService;
 use App\Timeline\Services\TimelineService;
 use App\Visitors\Services\VisitorService;
+use App\Visits\Services\VisitService;
 use Illuminate\Http\Request;
 
 class VisitorController extends Controller
@@ -14,7 +15,8 @@ class VisitorController extends Controller
     public function __construct(
         private VisitorService $visitorService,
         private RelationshipService $relationshipService,
-        private TimelineService $timelineService
+        private TimelineService $timelineService,
+        private VisitService $visitService
     ) {}
 
     public function index(Request $request)
@@ -74,7 +76,12 @@ class VisitorController extends Controller
             auth()->user()->tenant_id
         );
 
-        return view('visitors.workspace', compact('visitor', 'relationship', 'marketers', 'timelineEvents'));
+        $visits = $this->visitService->getVisitsForVisitor(
+            $vin,
+            auth()->user()->tenant_id
+        );
+
+        return view('visitors.workspace', compact('visitor', 'relationship', 'marketers', 'timelineEvents', 'visits'));
     }
 
     public function edit(string $vin)

@@ -22,7 +22,7 @@
 | MOD-003 Relationship Center | [MOD-003-RELATIONSHIP-CENTER.md](MOD-003-RELATIONSHIP-CENTER.md) · [Implementation](implementation/MOD-003-RELATIONSHIP-CENTER-PROTOTYPE.md) | yes | 3 | BDR-003, BDR-004, BDR-019 | `150-relationship-api.md` |
 | MOD-004 Communication Center | [MOD-004-COMMUNICATION-CENTER.md](MOD-004-COMMUNICATION-CENTER.md) | yes | 6 | BDR-014, BDR-016 | `180-communication-api.md` |
 | MOD-005 Knowledge Center | [MOD-005-KNOWLEDGE-CENTER.md](MOD-005-KNOWLEDGE-CENTER.md) | yes (basic) | 7 | BDR-009, BDR-010, BDR-016 | `190-knowledge-api.md` |
-| MOD-006 Visit Management | [MOD-006-VISIT-MANAGEMENT.md](MOD-006-VISIT-MANAGEMENT.md) | yes | 5 | BDR-007, BDR-012 | `160-visit-api.md` |
+| MOD-006 Visit Management | [MOD-006-VISIT-MANAGEMENT.md](MOD-006-VISIT-MANAGEMENT.md) · [Implementation](implementation/MOD-006-VISIT-MANAGEMENT-PROTOTYPE.md) | yes | 5 | BDR-007, BDR-012 | `160-visit-api.md` |
 | MOD-007 Purchase Management | [MOD-007-PURCHASE-MANAGEMENT.md](MOD-007-PURCHASE-MANAGEMENT.md) | yes | 8 | BDR-005, BDR-006, BDR-016 | `220-purchase-api.md` |
 | MOD-008 Relationship Investment | [MOD-008-RELATIONSHIP-INVESTMENT.md](MOD-008-RELATIONSHIP-INVESTMENT.md) | no | 9 | BDR-012 | `210-expense-api.md` |
 | MOD-009 Offering Management | [MOD-009-OFFERING-MANAGEMENT.md](MOD-009-OFFERING-MANAGEMENT.md) | no | 10 | BDR-002, BDR-006 | `200-offering-api.md` |
