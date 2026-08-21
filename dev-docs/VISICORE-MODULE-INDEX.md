@@ -18,7 +18,7 @@
 | Module | Implementation Record | MVP | Build step | Core BDRs | API contract |
 |---|---|---|---|---|---|
 | MOD-001 Visitor Workspace | [MOD-001-VISITOR-WORKSPACE.md](MOD-001-VISITOR-WORKSPACE.md) · [Implementation](implementation/MOD-001-VISITOR-WORKSPACE-PROTOTYPE.md) | yes | 2 | BDR-002, BDR-018 | `140-visitor-api.md` |
-| MOD-002 Timeline | [MOD-002-TIMELINE.md](MOD-002-TIMELINE.md) | yes | 4 | BDR-005, BDR-011, BDR-012, BDR-013, BDR-016 | `170-timeline-api.md` |
+| MOD-002 Timeline | [MOD-002-TIMELINE.md](MOD-002-TIMELINE.md) · [Implementation](implementation/MOD-002-TIMELINE-PROTOTYPE.md) | yes | 4 | BDR-005, BDR-011, BDR-012, BDR-013, BDR-016 | `170-timeline-api.md` |
 | MOD-003 Relationship Center | [MOD-003-RELATIONSHIP-CENTER.md](MOD-003-RELATIONSHIP-CENTER.md) · [Implementation](implementation/MOD-003-RELATIONSHIP-CENTER-PROTOTYPE.md) | yes | 3 | BDR-003, BDR-004, BDR-019 | `150-relationship-api.md` |
 | MOD-004 Communication Center | [MOD-004-COMMUNICATION-CENTER.md](MOD-004-COMMUNICATION-CENTER.md) | yes | 6 | BDR-014, BDR-016 | `180-communication-api.md` |
 | MOD-005 Knowledge Center | [MOD-005-KNOWLEDGE-CENTER.md](MOD-005-KNOWLEDGE-CENTER.md) | yes (basic) | 7 | BDR-009, BDR-010, BDR-016 | `190-knowledge-api.md` |

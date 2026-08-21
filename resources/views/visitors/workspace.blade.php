@@ -59,10 +59,45 @@
 
     <div class="card p-6">
         <div class="eyebrow mb-3">Timeline</div>
-        <div class="text-center py-8">
-            <p class="text-ink-400 mb-2">No activity yet.</p>
-            <p class="text-ink-400 text-sm">Timeline functionality (MOD-002) will be implemented in a separate feature.</p>
-        </div>
+
+        @if($timelineEvents->isEmpty())
+            <div class="text-center py-8">
+                <p class="text-ink-400 mb-2">No activity yet.</p>
+                <p class="text-ink-400 text-sm">Timeline events will appear here as interactions are recorded.</p>
+            </div>
+        @else
+            <div class="space-y-4">
+                @foreach($timelineEvents as $event)
+                    <div class="flex gap-4 p-4 rounded-lg {{ $event->isSystemGenerated() ? 'bg-surface' : 'bg-raised' }}">
+                        <div class="flex-shrink-0">
+                            @if($event->isSystemGenerated())
+                                <div class="w-8 h-8 rounded-full bg-accent-100 flex items-center justify-center">
+                                    <svg class="w-4 h-4 text-accent-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                                    </svg>
+                                </div>
+                            @else
+                                <div class="w-8 h-8 rounded-full bg-success-100 flex items-center justify-center">
+                                    <svg class="w-4 h-4 text-success-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                                    </svg>
+                                </div>
+                            @endif
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center gap-2">
+                                <span class="font-medium text-ink-900">{{ $event->source }}</span>
+                                <span class="badge badge-{{ $event->isSystemGenerated() ? 'info' : 'success' }}" style="font-size: 0.65rem;">
+                                    {{ $event->isSystemGenerated() ? 'System' : 'User' }}
+                                </span>
+                            </div>
+                            <p class="text-sm text-ink-600 mt-1">{{ $event->summary }}</p>
+                            <p class="text-xs text-ink-400 mt-2">{{ $event->created_at->format('M d, Y g:i A') }}</p>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        @endif
     </div>
 
     @include('relationships._panel', ['visitor' => $visitor, 'relationship' => $relationship, 'marketers' => $marketers])
