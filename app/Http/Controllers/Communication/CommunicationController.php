@@ -4,7 +4,8 @@ namespace App\Http\Controllers\Communication;
 
 use App\Communication\Services\CommunicationService;
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Http\Requests\Communication\SendCommunicationRequest;
+use App\Http\Resources\CommunicationResource;
 
 class CommunicationController extends Controller
 {
@@ -19,24 +20,18 @@ class CommunicationController extends Controller
             auth()->user()->tenant_id
         );
 
-        return response()->json(['data' => $communications]);
+        return CommunicationResource::collection($communications);
     }
 
-    public function store(Request $request, string $vin)
+    public function store(SendCommunicationRequest $request, string $vin)
     {
-        $validated = $request->validate([
-            'channel' => 'required|in:sms,email,notice,call,meeting',
-            'content' => 'nullable|string|max:5000',
-            'notice_id' => 'nullable|integer',
-        ]);
-
         $communication = $this->communicationService->createCommunication(
-            $validated,
+            $request->validated(),
             $vin,
             auth()->user()->tenant_id
         );
 
-        return response()->json(['data' => $communication], 201);
+        return new CommunicationResource($communication);
     }
 
     public function show(string $vin, int $communicationId)
@@ -50,6 +45,6 @@ class CommunicationController extends Controller
             abort(404);
         }
 
-        return response()->json(['data' => $communication]);
+        return new CommunicationResource($communication);
     }
 }

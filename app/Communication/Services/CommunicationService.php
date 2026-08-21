@@ -2,6 +2,7 @@
 
 namespace App\Communication\Services;
 
+use App\Communication\Enums\Channel;
 use App\Models\Communication;
 use App\Timeline\Services\TimelineService;
 use Illuminate\Support\Facades\DB;
@@ -31,18 +32,20 @@ class CommunicationService
     public function createCommunication(array $data, string $visitorVin, int $tenantId): Communication
     {
         return DB::transaction(function () use ($data, $visitorVin, $tenantId) {
+            $channel = Channel::from($data['channel']);
+
             $communication = Communication::create([
                 'tenant_id' => $tenantId,
                 'visitor_vin' => $visitorVin,
-                'channel' => $data['channel'],
+                'channel' => $channel,
                 'content' => $data['content'] ?? null,
                 'notice_id' => $data['notice_id'] ?? null,
                 'sent_at' => now(),
             ]);
 
-            $eventType = $communication->isSystemGenerated() ? 'system' : 'user';
-            $eventSource = $this->getEventSource($communication->channel);
-            $summary = $this->buildEventSummary($communication);
+            $eventType = $channel->isSystemGenerated() ? 'system' : 'user';
+            $eventSource = $this->getEventSource($channel);
+            $summary = $this->buildEventSummary($communication, $channel);
 
             $this->timelineService->appendEvent([
                 'tenant_id' => $tenantId,
@@ -56,21 +59,20 @@ class CommunicationService
         });
     }
 
-    private function getEventSource(string $channel): string
+    private function getEventSource(Channel $channel): string
     {
         return match ($channel) {
-            'sms' => 'SMS Sent',
-            'email' => 'Email Sent',
-            'notice' => 'Notice Sent',
-            'call' => 'Call',
-            'meeting' => 'Meeting',
-            default => 'Communication',
+            Channel::SMS => 'SMS Sent',
+            Channel::Email => 'Email Sent',
+            Channel::Notice => 'Notice Sent',
+            Channel::Call => 'Call',
+            Channel::Meeting => 'Meeting',
         };
     }
 
-    private function buildEventSummary(Communication $communication): string
+    private function buildEventSummary(Communication $communication, Channel $channel): string
     {
-        $channelName = ucfirst($communication->channel);
+        $channelName = $channel->label();
 
         if ($communication->content) {
             return sprintf('%s sent: %s', $channelName, Str::limit($communication->content, 100));

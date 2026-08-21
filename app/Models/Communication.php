@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Communication\Enums\Channel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -20,6 +21,7 @@ class Communication extends Model
     ];
 
     protected $casts = [
+        'channel' => Channel::class,
         'sent_at' => 'datetime',
     ];
 
@@ -28,38 +30,43 @@ class Communication extends Model
         return $this->belongsTo(Tenant::class);
     }
 
+    public function notice(): BelongsTo
+    {
+        return $this->belongsTo(Notice::class);
+    }
+
     public function isSms(): bool
     {
-        return $this->channel === 'sms';
+        return $this->channel === Channel::SMS;
     }
 
     public function isEmail(): bool
     {
-        return $this->channel === 'email';
+        return $this->channel === Channel::Email;
     }
 
     public function isNotice(): bool
     {
-        return $this->channel === 'notice';
+        return $this->channel === Channel::Notice;
     }
 
     public function isCall(): bool
     {
-        return $this->channel === 'call';
+        return $this->channel === Channel::Call;
     }
 
     public function isMeeting(): bool
     {
-        return $this->channel === 'meeting';
+        return $this->channel === Channel::Meeting;
     }
 
     public function isSystemGenerated(): bool
     {
-        return in_array($this->channel, ['sms', 'email', 'notice']);
+        return $this->channel->isSystemGenerated();
     }
 
     public function isUserGenerated(): bool
     {
-        return in_array($this->channel, ['call', 'meeting']);
+        return $this->channel->isUserGenerated();
     }
 }

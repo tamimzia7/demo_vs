@@ -81,6 +81,30 @@ describe('Communication Management', function () {
         ]);
     });
 
+    it('can log a meeting communication', function () {
+        $tenant = Tenant::create(['name' => 'Test Tenant']);
+        $user = User::factory()->create(['role' => 'super_admin', 'tenant_id' => $tenant->id]);
+        $visitor = Visitor::create([
+            'tenant_id' => $tenant->id,
+            'vin' => 'VC-2026-000001',
+            'name' => 'Test Visitor',
+            'lifecycle_state' => 'Interested',
+        ]);
+
+        $response = $this->actingAs($user)->post(route('visitors.communications.store', $visitor->vin), [
+            'channel' => 'meeting',
+            'content' => 'On-site product demo completed.',
+        ]);
+
+        $response->assertStatus(201);
+        $this->assertDatabaseHas('communications', [
+            'visitor_vin' => 'VC-2026-000001',
+            'channel' => 'meeting',
+            'content' => 'On-site product demo completed.',
+            'tenant_id' => $tenant->id,
+        ]);
+    });
+
     it('creates a system event for SMS communication', function () {
         $tenant = Tenant::create(['name' => 'Test Tenant']);
         $user = User::factory()->create(['role' => 'super_admin', 'tenant_id' => $tenant->id]);
@@ -104,6 +128,29 @@ describe('Communication Management', function () {
         ]);
     });
 
+    it('creates a system event for email communication', function () {
+        $tenant = Tenant::create(['name' => 'Test Tenant']);
+        $user = User::factory()->create(['role' => 'super_admin', 'tenant_id' => $tenant->id]);
+        $visitor = Visitor::create([
+            'tenant_id' => $tenant->id,
+            'vin' => 'VC-2026-000001',
+            'name' => 'Test Visitor',
+            'lifecycle_state' => 'Interested',
+        ]);
+
+        $this->actingAs($user)->post(route('visitors.communications.store', $visitor->vin), [
+            'channel' => 'email',
+            'content' => 'Test email message.',
+        ]);
+
+        $this->assertDatabaseHas('timeline_events', [
+            'visitor_vin' => 'VC-2026-000001',
+            'type' => 'system',
+            'source' => 'Email Sent',
+            'tenant_id' => $tenant->id,
+        ]);
+    });
+
     it('creates a user event for call communication', function () {
         $tenant = Tenant::create(['name' => 'Test Tenant']);
         $user = User::factory()->create(['role' => 'super_admin', 'tenant_id' => $tenant->id]);
@@ -123,6 +170,29 @@ describe('Communication Management', function () {
             'visitor_vin' => 'VC-2026-000001',
             'type' => 'user',
             'source' => 'Call',
+            'tenant_id' => $tenant->id,
+        ]);
+    });
+
+    it('creates a user event for meeting communication', function () {
+        $tenant = Tenant::create(['name' => 'Test Tenant']);
+        $user = User::factory()->create(['role' => 'super_admin', 'tenant_id' => $tenant->id]);
+        $visitor = Visitor::create([
+            'tenant_id' => $tenant->id,
+            'vin' => 'VC-2026-000001',
+            'name' => 'Test Visitor',
+            'lifecycle_state' => 'Interested',
+        ]);
+
+        $this->actingAs($user)->post(route('visitors.communications.store', $visitor->vin), [
+            'channel' => 'meeting',
+            'content' => 'Test meeting log.',
+        ]);
+
+        $this->assertDatabaseHas('timeline_events', [
+            'visitor_vin' => 'VC-2026-000001',
+            'type' => 'user',
+            'source' => 'Meeting',
             'tenant_id' => $tenant->id,
         ]);
     });
@@ -199,5 +269,170 @@ describe('Communication Management', function () {
         ]));
 
         $response->assertStatus(404);
+    });
+
+    it('returns validation error for invalid channel', function () {
+        $tenant = Tenant::create(['name' => 'Test Tenant']);
+        $user = User::factory()->create(['role' => 'super_admin', 'tenant_id' => $tenant->id]);
+        $visitor = Visitor::create([
+            'tenant_id' => $tenant->id,
+            'vin' => 'VC-2026-000001',
+            'name' => 'Test Visitor',
+            'lifecycle_state' => 'Interested',
+        ]);
+
+        $response = $this->actingAs($user)->postJson(route('visitors.communications.store', $visitor->vin), [
+            'channel' => 'invalid',
+            'content' => 'Some content.',
+        ]);
+
+        $response->assertStatus(422);
+        $response->assertJsonValidationErrors('channel');
+    });
+
+    it('returns validation error for missing content on SMS', function () {
+        $tenant = Tenant::create(['name' => 'Test Tenant']);
+        $user = User::factory()->create(['role' => 'super_admin', 'tenant_id' => $tenant->id]);
+        $visitor = Visitor::create([
+            'tenant_id' => $tenant->id,
+            'vin' => 'VC-2026-000001',
+            'name' => 'Test Visitor',
+            'lifecycle_state' => 'Interested',
+        ]);
+
+        $response = $this->actingAs($user)->postJson(route('visitors.communications.store', $visitor->vin), [
+            'channel' => 'sms',
+        ]);
+
+        $response->assertStatus(422);
+        $response->assertJsonValidationErrors('content');
+    });
+
+    it('returns validation error for missing content on email', function () {
+        $tenant = Tenant::create(['name' => 'Test Tenant']);
+        $user = User::factory()->create(['role' => 'super_admin', 'tenant_id' => $tenant->id]);
+        $visitor = Visitor::create([
+            'tenant_id' => $tenant->id,
+            'vin' => 'VC-2026-000001',
+            'name' => 'Test Visitor',
+            'lifecycle_state' => 'Interested',
+        ]);
+
+        $response = $this->actingAs($user)->postJson(route('visitors.communications.store', $visitor->vin), [
+            'channel' => 'email',
+        ]);
+
+        $response->assertStatus(422);
+        $response->assertJsonValidationErrors('content');
+    });
+
+    it('returns validation error for missing content on call', function () {
+        $tenant = Tenant::create(['name' => 'Test Tenant']);
+        $user = User::factory()->create(['role' => 'super_admin', 'tenant_id' => $tenant->id]);
+        $visitor = Visitor::create([
+            'tenant_id' => $tenant->id,
+            'vin' => 'VC-2026-000001',
+            'name' => 'Test Visitor',
+            'lifecycle_state' => 'Interested',
+        ]);
+
+        $response = $this->actingAs($user)->postJson(route('visitors.communications.store', $visitor->vin), [
+            'channel' => 'call',
+        ]);
+
+        $response->assertStatus(422);
+        $response->assertJsonValidationErrors('content');
+    });
+
+    it('allows empty content for meeting channel', function () {
+        $tenant = Tenant::create(['name' => 'Test Tenant']);
+        $user = User::factory()->create(['role' => 'super_admin', 'tenant_id' => $tenant->id]);
+        $visitor = Visitor::create([
+            'tenant_id' => $tenant->id,
+            'vin' => 'VC-2026-000001',
+            'name' => 'Test Visitor',
+            'lifecycle_state' => 'Interested',
+        ]);
+
+        $response = $this->actingAs($user)->post(route('visitors.communications.store', $visitor->vin), [
+            'channel' => 'meeting',
+        ]);
+
+        $response->assertStatus(201);
+        $this->assertDatabaseHas('communications', [
+            'visitor_vin' => 'VC-2026-000001',
+            'channel' => 'meeting',
+            'content' => null,
+            'tenant_id' => $tenant->id,
+        ]);
+    });
+
+    it('returns empty list for visitor with no communications', function () {
+        $tenant = Tenant::create(['name' => 'Test Tenant']);
+        $user = User::factory()->create(['role' => 'super_admin', 'tenant_id' => $tenant->id]);
+        $visitor = Visitor::create([
+            'tenant_id' => $tenant->id,
+            'vin' => 'VC-2026-000001',
+            'name' => 'Test Visitor',
+            'lifecycle_state' => 'Interested',
+        ]);
+
+        $response = $this->actingAs($user)->get(route('visitors.communications.index', $visitor->vin));
+
+        $response->assertStatus(200);
+        $response->assertJsonCount(0, 'data');
+    });
+
+    it('returns proper API resource shape', function () {
+        $tenant = Tenant::create(['name' => 'Test Tenant']);
+        $user = User::factory()->create(['role' => 'super_admin', 'tenant_id' => $tenant->id]);
+        $visitor = Visitor::create([
+            'tenant_id' => $tenant->id,
+            'vin' => 'VC-2026-000001',
+            'name' => 'Test Visitor',
+            'lifecycle_state' => 'Interested',
+        ]);
+
+        $response = $this->actingAs($user)->post(route('visitors.communications.store', $visitor->vin), [
+            'channel' => 'sms',
+            'content' => 'Test SMS content.',
+        ]);
+
+        $response->assertStatus(201);
+        $response->assertJsonStructure([
+            'data' => [
+                'id',
+                'channel',
+                'channel_label',
+                'content',
+                'type',
+                'sent_at',
+                'created_at',
+            ],
+        ]);
+        $response->assertJson([
+            'data' => [
+                'channel' => 'sms',
+                'channel_label' => 'SMS',
+                'type' => 'system',
+            ],
+        ]);
+    });
+
+    it('denies unauthenticated access', function () {
+        $tenant = Tenant::create(['name' => 'Test Tenant']);
+        $visitor = Visitor::create([
+            'tenant_id' => $tenant->id,
+            'vin' => 'VC-2026-000001',
+            'name' => 'Test Visitor',
+            'lifecycle_state' => 'Interested',
+        ]);
+
+        $response = $this->post(route('visitors.communications.store', $visitor->vin), [
+            'channel' => 'sms',
+            'content' => 'Test SMS.',
+        ]);
+
+        $response->assertStatus(403);
     });
 });
