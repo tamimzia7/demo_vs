@@ -28,5 +28,8 @@ class Purchase extends Model
         return $this->belongsTo(Tenant::class);
     }
 
-    // offering() relationship deferred to MOD-009 (Offerings module)
+    public function offering(): BelongsTo
+    {
+        return $this->belongsTo(Offering::class);
+    }
 }

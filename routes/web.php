@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Communication\CommunicationController;
 use App\Http\Controllers\Investment\ExpenseController;
 use App\Http\Controllers\Knowledge\KnowledgeItemController;
+use App\Http\Controllers\Offering\OfferingController;
 use App\Http\Controllers\Purchase\PurchaseController;
 use App\Http\Controllers\Relationship\RelationshipController;
 use App\Http\Controllers\Timeline\TimelineController;
@@ -21,9 +22,9 @@ Route::get('/dashboard', function () {
     return view('dashboard');
 })->name('dashboard');
 
-Route::get('/offerings', function () {
-    return view('offerings');
-})->name('offerings');
+// Route::get('/offerings', function () {
+//     return view('offerings');
+// })->name('offerings');
 
 Route::get('/reports', function () {
     return view('reports');
@@ -141,3 +142,22 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::post('/system-tags', [SystemTagController::class, 'store'])->name('system-tags.store');
     Route::delete('/system-tags/{id}', [SystemTagController::class, 'destroy'])->name('system-tags.destroy');
 });
+
+// Offering Management Routes (MOD-009)
+Route::get('/offerings', [OfferingController::class, 'index'])
+    ->name('offerings.index');
+
+Route::get('/offerings/create', [OfferingController::class, 'create'])
+    ->name('offerings.create');
+
+Route::post('/offerings', [OfferingController::class, 'store'])
+    ->name('offerings.store');
+
+Route::get('/offerings/{off}/edit', [OfferingController::class, 'edit'])
+    ->name('offerings.edit');
+
+Route::put('/offerings/{off}', [OfferingController::class, 'update'])
+    ->name('offerings.update');
+
+Route::delete('/offerings/{off}', [OfferingController::class, 'destroy'])
+    ->name('offerings.destroy');

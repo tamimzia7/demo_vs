@@ -25,7 +25,7 @@
 | MOD-006 Visit Management | [MOD-006-VISIT-MANAGEMENT.md](MOD-006-VISIT-MANAGEMENT.md) · [Implementation](implementation/MOD-006-VISIT-MANAGEMENT-PROTOTYPE.md) | yes | 5 | BDR-007, BDR-012 | `160-visit-api.md` |
 | MOD-007 Purchase Management | [MOD-007-PURCHASE-MANAGEMENT.md](MOD-007-PURCHASE-MANAGEMENT.md) · [Implementation](implementation/MOD-007-PURCHASE-MANAGEMENT-PROTOTYPE.md) | yes | 8 | BDR-005, BDR-006, BDR-016 | `220-purchase-api.md` |
 | MOD-008 Relationship Investment | [MOD-008-RELATIONSHIP-INVESTMENT.md](MOD-008-RELATIONSHIP-INVESTMENT.md) · [Implementation](implementation/MOD-008-RELATIONSHIP-INVESTMENT-PROTOTYPE.md) | no | 9 | BDR-012 | `210-expense-api.md` |
-| MOD-009 Offering Management | [MOD-009-OFFERING-MANAGEMENT.md](MOD-009-OFFERING-MANAGEMENT.md) | no | 10 | BDR-002, BDR-006 | `200-offering-api.md` |
+| MOD-009 Offering Management | [MOD-009-OFFERING-MANAGEMENT.md](MOD-009-OFFERING-MANAGEMENT.md) · [Implementation](implementation/MOD-009-OFFERING-MANAGEMENT-PROTOTYPE.md) | post-MVP | 10 | BDR-002, BDR-006 | `200-offering-api.md` |
 | MOD-010 Reports & Intelligence | [MOD-010-REPORTS-INTELLIGENCE.md](MOD-010-REPORTS-INTELLIGENCE.md) | no | 12 | BDR-011, BDR-012 | `250-reporting-api.md` |
 | MOD-011 Subscription | [MOD-011-SUBSCRIPTION.md](MOD-011-SUBSCRIPTION.md) | no | 11 | BDR-016 | `230-subscription-api.md` |
 | MOD-012 Administration | [MOD-012-ADMINISTRATION.md](MOD-012-ADMINISTRATION.md) | foundation | 1 | BDR-015, BDR-020 | authn/authz docs |
