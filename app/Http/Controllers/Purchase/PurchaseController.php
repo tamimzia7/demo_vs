@@ -31,7 +31,9 @@ class PurchaseController extends Controller
             auth()->user()->tenant_id
         );
 
-        return new PurchaseResource($purchase);
+        return (new PurchaseResource($purchase))
+            ->response()
+            ->setStatusCode(201);
     }
 
     public function show(string $vin, int $purchaseId)

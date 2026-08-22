@@ -341,4 +341,84 @@ describe('Purchase Management', function () {
         $this->assertEquals('100.00', $data[0]['amount']);
         $this->assertEquals('50.00', $data[1]['amount']);
     });
+
+    it('enforces tenant isolation on purchases', function () {
+        $tenant1 = Tenant::create(['name' => 'Tenant 1']);
+        $tenant2 = Tenant::create(['name' => 'Tenant 2']);
+        $user1 = User::factory()->create(['role' => 'super_admin', 'tenant_id' => $tenant1->id]);
+        $user2 = User::factory()->create(['role' => 'super_admin', 'tenant_id' => $tenant2->id]);
+
+        Visitor::create([
+            'tenant_id' => $tenant1->id,
+            'vin' => 'VC-2026-000001',
+            'name' => 'Visitor 1',
+            'lifecycle_state' => 'Interested',
+        ]);
+
+        Visitor::create([
+            'tenant_id' => $tenant2->id,
+            'vin' => 'VC-2026-000002',
+            'name' => 'Visitor 2',
+            'lifecycle_state' => 'Interested',
+        ]);
+
+        Purchase::create([
+            'tenant_id' => $tenant1->id,
+            'visitor_vin' => 'VC-2026-000001',
+            'amount' => 100.00,
+            'purchased_at' => now(),
+        ]);
+
+        Purchase::create([
+            'tenant_id' => $tenant2->id,
+            'visitor_vin' => 'VC-2026-000002',
+            'amount' => 200.00,
+            'purchased_at' => now(),
+        ]);
+
+        $response = $this->actingAs($user1)->getJson(route('visitors.purchases.index', 'VC-2026-000001'));
+
+        $response->assertStatus(200);
+        $response->assertJsonCount(1, 'data');
+        $data = $response->json('data');
+        $this->assertEquals('100.00', $data[0]['amount']);
+    });
+
+    it('cannot record purchase for visitor in different tenant', function () {
+        $tenant1 = Tenant::create(['name' => 'Tenant 1']);
+        $tenant2 = Tenant::create(['name' => 'Tenant 2']);
+        $user1 = User::factory()->create(['role' => 'super_admin', 'tenant_id' => $tenant1->id]);
+
+        Visitor::create([
+            'tenant_id' => $tenant2->id,
+            'vin' => 'VC-2026-000002',
+            'name' => 'Visitor 2',
+            'lifecycle_state' => 'Interested',
+        ]);
+
+        $response = $this->actingAs($user1)->postJson(route('visitors.purchases.store', 'VC-2026-000002'), [
+            'purchased_at' => now()->toDateTimeString(),
+        ]);
+
+        $response->assertStatus(404);
+    });
+
+    it('returns visitor lifecycle state after recording purchase', function () {
+        $tenant = Tenant::create(['name' => 'Test Tenant']);
+        $user = User::factory()->create(['role' => 'super_admin', 'tenant_id' => $tenant->id]);
+        $visitor = Visitor::create([
+            'tenant_id' => $tenant->id,
+            'vin' => 'VC-2026-000001',
+            'name' => 'Test Visitor',
+            'lifecycle_state' => 'Interested',
+        ]);
+
+        $response = $this->actingAs($user)->postJson(route('visitors.purchases.store', $visitor->vin), [
+            'purchased_at' => now()->toDateTimeString(),
+        ]);
+
+        $response->assertStatus(201);
+        $visitor->refresh();
+        $this->assertEquals('Purchased', $visitor->lifecycle_state);
+    });
 });

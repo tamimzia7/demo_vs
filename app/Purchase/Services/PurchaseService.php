@@ -31,6 +31,14 @@ class PurchaseService
     public function recordPurchase(array $data, string $visitorVin, int $tenantId): Purchase
     {
         return DB::transaction(function () use ($data, $visitorVin, $tenantId) {
+            $visitor = Visitor::where('vin', $visitorVin)
+                ->where('tenant_id', $tenantId)
+                ->first();
+
+            if (! $visitor) {
+                abort(404);
+            }
+
             $purchase = Purchase::create([
                 'tenant_id' => $tenantId,
                 'visitor_vin' => $visitorVin,
