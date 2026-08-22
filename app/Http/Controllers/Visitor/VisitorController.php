@@ -4,9 +4,13 @@ namespace App\Http\Controllers\Visitor;
 
 use App\Communication\Services\CommunicationService;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Visitor\StoreVisitorRequest;
+use App\Http\Requests\Visitor\UpdateVisitorRequest;
 use App\Investment\Services\InvestmentService;
 use App\Knowledge\Services\KnowledgeService;
+use App\Models\TimelineEvent;
 use App\Models\User;
+use App\Models\Visitor;
 use App\Purchase\Services\PurchaseService;
 use App\Relationships\Services\RelationshipService;
 use App\Timeline\Services\TimelineService;
@@ -29,6 +33,8 @@ class VisitorController extends Controller
 
     public function index(Request $request)
     {
+        $this->authorize('viewAny', Visitor::class);
+
         $search = $request->input('search');
         $visitors = $this->visitorService->getVisitors(
             auth()->user()->tenant_id,
@@ -40,20 +46,17 @@ class VisitorController extends Controller
 
     public function create()
     {
+        $this->authorize('create', Visitor::class);
+
         return view('visitors.create');
     }
 
-    public function store(Request $request)
+    public function store(StoreVisitorRequest $request)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'channel' => 'nullable|string|max:255',
-            'contact' => 'nullable|array',
-            'referrer_vin' => 'nullable|string|max:20',
-        ]);
+        $this->authorize('create', Visitor::class);
 
         $visitor = $this->visitorService->createVisitor(
-            $validated,
+            $request->validated(),
             auth()->user()->tenant_id
         );
 
@@ -72,6 +75,8 @@ class VisitorController extends Controller
             abort(404);
         }
 
+        $this->authorize('view', $visitor);
+
         $relationship = $this->relationshipService->getRelationshipForVisitor(
             $vin,
             auth()->user()->tenant_id
@@ -79,10 +84,10 @@ class VisitorController extends Controller
 
         $marketers = User::where('tenant_id', auth()->user()->tenant_id)->get();
 
-        $timelineEvents = $this->timelineService->getEventsForVisitor(
-            $vin,
-            auth()->user()->tenant_id
-        );
+        $timelineEvents = TimelineEvent::where('visitor_vin', $vin)
+            ->where('tenant_id', auth()->user()->tenant_id)
+            ->orderByDesc('created_at')
+            ->get();
 
         $visits = $this->visitService->getVisitsForVisitor(
             $vin,
@@ -123,10 +128,12 @@ class VisitorController extends Controller
             abort(404);
         }
 
+        $this->authorize('update', $visitor);
+
         return view('visitors.edit', compact('visitor'));
     }
 
-    public function update(Request $request, string $vin)
+    public function update(UpdateVisitorRequest $request, string $vin)
     {
         $visitor = $this->visitorService->getVisitorByVin(
             $vin,
@@ -137,13 +144,9 @@ class VisitorController extends Controller
             abort(404);
         }
 
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'channel' => 'nullable|string|max:255',
-            'contact' => 'nullable|array',
-        ]);
+        $this->authorize('update', $visitor);
 
-        $this->visitorService->updateVisitor($visitor, $validated);
+        $this->visitorService->updateVisitor($visitor, $request->validated());
 
         return redirect()->route('visitors.workspace', $visitor->vin)
             ->with('success', 'Visitor updated successfully.');
@@ -159,6 +162,8 @@ class VisitorController extends Controller
         if (! $visitor) {
             abort(404);
         }
+
+        $this->authorize('archive', $visitor);
 
         $this->visitorService->archiveVisitor($visitor);
 
@@ -176,6 +181,8 @@ class VisitorController extends Controller
         if (! $visitor) {
             abort(404);
         }
+
+        $this->authorize('restore', $visitor);
 
         $this->visitorService->restoreVisitor($visitor);
 

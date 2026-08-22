@@ -3,6 +3,7 @@
 namespace App\Investment\Services;
 
 use App\Models\Expense;
+use App\Models\Visitor;
 use App\Timeline\Services\TimelineService;
 use Illuminate\Support\Facades\DB;
 
@@ -23,6 +24,14 @@ class InvestmentService
     public function recordExpense(array $data, string $visitorVin, int $tenantId): Expense
     {
         return DB::transaction(function () use ($data, $visitorVin, $tenantId) {
+            $visitor = Visitor::where('vin', $visitorVin)
+                ->where('tenant_id', $tenantId)
+                ->first();
+
+            if (! $visitor) {
+                abort(404);
+            }
+
             $expense = Expense::create([
                 'tenant_id' => $tenantId,
                 'visitor_vin' => $visitorVin,

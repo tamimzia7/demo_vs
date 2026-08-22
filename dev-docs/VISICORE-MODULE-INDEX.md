@@ -17,7 +17,7 @@
 
 | Module | Implementation Record | MVP | Build step | Core BDRs | API contract |
 |---|---|---|---|---|---|
-| MOD-001 Visitor Workspace | [MOD-001-VISITOR-WORKSPACE.md](MOD-001-VISITOR-WORKSPACE.md) · [Implementation](implementation/MOD-001-VISITOR-WORKSPACE-PROTOTYPE.md) | yes | 2 | BDR-002, BDR-018 | `140-visitor-api.md` |
+| MOD-001 Visitor Workspace | [MOD-001-VISITOR-WORKSPACE.md](MOD-001-VISITOR-WORKSPACE.md) · [Implementation](implementation/MOD-001-VISITOR-WORKSPACE-PROTOTYPE.md) · **Implemented** | yes | 2 | BDR-002, BDR-018 | `140-visitor-api.md` |
 | MOD-002 Timeline | [MOD-002-TIMELINE.md](MOD-002-TIMELINE.md) · [Implementation](implementation/MOD-002-TIMELINE-PROTOTYPE.md) | yes | 4 | BDR-005, BDR-011, BDR-012, BDR-013, BDR-016 | `170-timeline-api.md` |
 | MOD-003 Relationship Center | [MOD-003-RELATIONSHIP-CENTER.md](MOD-003-RELATIONSHIP-CENTER.md) · [Implementation](implementation/MOD-003-RELATIONSHIP-CENTER-PROTOTYPE.md) | yes | 3 | BDR-003, BDR-004, BDR-019 | `150-relationship-api.md` |
 | MOD-004 Communication Center | [MOD-004-COMMUNICATION-CENTER.md](MOD-004-COMMUNICATION-CENTER.md) · [Implementation](implementation/MOD-004-COMMUNICATION-CENTER-PROTOTYPE.md) | yes | 6 | BDR-014, BDR-016 | `180-communication-api.md` |
@@ -26,7 +26,7 @@
 | MOD-007 Purchase Management | [MOD-007-PURCHASE-MANAGEMENT.md](MOD-007-PURCHASE-MANAGEMENT.md) · [Implementation](implementation/MOD-007-PURCHASE-MANAGEMENT-PROTOTYPE.md) | yes | 8 | BDR-005, BDR-006, BDR-016 | `220-purchase-api.md` |
 | MOD-008 Relationship Investment | [MOD-008-RELATIONSHIP-INVESTMENT.md](MOD-008-RELATIONSHIP-INVESTMENT.md) · [Implementation](implementation/MOD-008-RELATIONSHIP-INVESTMENT-PROTOTYPE.md) | no | 9 | BDR-012 | `210-expense-api.md` |
 | MOD-009 Offering Management | [MOD-009-OFFERING-MANAGEMENT.md](MOD-009-OFFERING-MANAGEMENT.md) · [Implementation](implementation/MOD-009-OFFERING-MANAGEMENT-PROTOTYPE.md) | post-MVP | 10 | BDR-002, BDR-006 | `200-offering-api.md` |
-| MOD-010 Reports & Intelligence | [MOD-010-REPORTS-INTELLIGENCE.md](MOD-010-REPORTS-INTELLIGENCE.md) | no | 12 | BDR-011, BDR-012 | `250-reporting-api.md` |
+| MOD-010 Reports & Intelligence | [MOD-010-REPORTS-INTELLIGENCE.md](MOD-010-REPORTS-INTELLIGENCE.md) · [Implementation](implementation/MOD-010-REPORTS-INTELLIGENCE-PROTOTYPE.md) | no | 12 | BDR-011, BDR-012 | `250-reporting-api.md` |
 | MOD-011 Subscription | [MOD-011-SUBSCRIPTION.md](MOD-011-SUBSCRIPTION.md) | no | 11 | BDR-016 | `230-subscription-api.md` |
 | MOD-012 Administration | [MOD-012-ADMINISTRATION.md](MOD-012-ADMINISTRATION.md) | foundation | 1 | BDR-015, BDR-020 | authn/authz docs |
 | MOD-013 Settings | [MOD-013-SETTINGS.md](MOD-013-SETTINGS.md) | later | 13 | BDR-015 | settings (user-scoped) |

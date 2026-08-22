@@ -11,7 +11,7 @@ return new class extends Migration
         Schema::create('visitors', function (Blueprint $table) {
             $table->id();
             $table->foreignId('tenant_id')->constrained()->cascadeOnDelete();
-            $table->string('vin')->unique();
+            $table->string('vin');
             $table->string('name');
             $table->string('channel')->nullable();
             $table->json('contact')->nullable();
@@ -27,8 +27,8 @@ return new class extends Migration
             $table->timestamp('archived_at')->nullable();
             $table->integer('event_count')->default(0);
             $table->timestamps();
-            $table->softDeletes();
 
+            $table->unique(['tenant_id', 'vin']);
             $table->index(['tenant_id', 'lifecycle_state']);
             $table->index(['tenant_id', 'name']);
         });

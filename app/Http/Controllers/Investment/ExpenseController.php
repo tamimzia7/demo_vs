@@ -31,6 +31,8 @@ class ExpenseController extends Controller
             auth()->user()->tenant_id
         );
 
-        return new ExpenseResource($expense);
+        return (new ExpenseResource($expense))
+            ->response()
+            ->setStatusCode(201);
     }
 }

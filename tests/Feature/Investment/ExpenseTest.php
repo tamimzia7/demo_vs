@@ -257,4 +257,65 @@ describe('Relationship Investment', function () {
         $this->assertEquals('Travel', $data[0]['category']);
         $this->assertEquals('Phone Call', $data[1]['category']);
     });
+
+    it('enforces tenant isolation on expense reads', function () {
+        $tenant1 = Tenant::create(['name' => 'Tenant 1']);
+        $tenant2 = Tenant::create(['name' => 'Tenant 2']);
+        $user1 = User::factory()->create(['role' => 'super_admin', 'tenant_id' => $tenant1->id]);
+
+        Visitor::create([
+            'tenant_id' => $tenant1->id,
+            'vin' => 'VC-2026-000001',
+            'name' => 'Visitor 1',
+            'lifecycle_state' => 'Interested',
+        ]);
+
+        Visitor::create([
+            'tenant_id' => $tenant2->id,
+            'vin' => 'VC-2026-000002',
+            'name' => 'Visitor 2',
+            'lifecycle_state' => 'Interested',
+        ]);
+
+        Expense::create([
+            'tenant_id' => $tenant1->id,
+            'visitor_vin' => 'VC-2026-000001',
+            'category' => 'Travel',
+            'expense_date' => now(),
+        ]);
+
+        Expense::create([
+            'tenant_id' => $tenant2->id,
+            'visitor_vin' => 'VC-2026-000002',
+            'category' => 'Gift',
+            'expense_date' => now(),
+        ]);
+
+        $response = $this->actingAs($user1)->getJson(route('visitors.expenses.index', 'VC-2026-000001'));
+
+        $response->assertStatus(200);
+        $response->assertJsonCount(1, 'data');
+        $data = $response->json('data');
+        $this->assertEquals('Travel', $data[0]['category']);
+    });
+
+    it('cannot record expense for visitor in different tenant', function () {
+        $tenant1 = Tenant::create(['name' => 'Tenant 1']);
+        $tenant2 = Tenant::create(['name' => 'Tenant 2']);
+        $user1 = User::factory()->create(['role' => 'super_admin', 'tenant_id' => $tenant1->id]);
+
+        Visitor::create([
+            'tenant_id' => $tenant2->id,
+            'vin' => 'VC-2026-000002',
+            'name' => 'Visitor 2',
+            'lifecycle_state' => 'Interested',
+        ]);
+
+        $response = $this->actingAs($user1)->postJson(route('visitors.expenses.store', 'VC-2026-000002'), [
+            'category' => 'Travel',
+            'expense_date' => now()->toDateString(),
+        ]);
+
+        $response->assertStatus(404);
+    });
 });

@@ -2,6 +2,7 @@
 
 namespace App\Visitors\Services;
 
+use App\Models\TimelineEvent;
 use App\Models\Visitor;
 use Illuminate\Support\Facades\DB;
 
@@ -50,7 +51,7 @@ class VisitorService
         return DB::transaction(function () use ($data, $tenantId) {
             $vin = $this->generateVin();
 
-            return Visitor::create([
+            $visitor = Visitor::create([
                 'tenant_id' => $tenantId,
                 'vin' => $vin,
                 'name' => $data['name'],
@@ -59,7 +60,35 @@ class VisitorService
                 'referrer_vin' => $data['referrer_vin'] ?? null,
                 'lifecycle_state' => 'Interested',
             ]);
+
+            $this->recordVisitorCreatedEvent($visitor, $tenantId);
+
+            return $visitor;
         });
+    }
+
+    /**
+     * Records the VisitorCreated System Timeline Event (BDR-016 / MOD-001 §H).
+     */
+    protected function recordVisitorCreatedEvent(Visitor $visitor, int $tenantId): void
+    {
+        TimelineEvent::create([
+            'evn' => $this->generateEvn(),
+            'tenant_id' => $tenantId,
+            'visitor_vin' => $visitor->vin,
+            'type' => 'system',
+            'source' => 'VisitorCreated',
+            'summary' => 'Visitor created',
+        ]);
+    }
+
+    protected function generateEvn(): string
+    {
+        $max = TimelineEvent::max('evn');
+
+        $next = $max ? ((int) substr($max, -6)) + 1 : 1;
+
+        return sprintf('EVN-%06d', $next);
     }
 
     public function updateVisitor(Visitor $visitor, array $data): Visitor

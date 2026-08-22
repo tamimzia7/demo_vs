@@ -1,0 +1,26 @@
+<?php
+
+namespace App\Http\Requests\Visitor;
+
+use Illuminate\Foundation\Http\FormRequest;
+
+class StoreVisitorRequest extends FormRequest
+{
+    public function authorize(): bool
+    {
+        return true;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function rules(): array
+    {
+        return [
+            'name' => ['required', 'string', 'max:255'],
+            'channel' => ['nullable', 'string', 'max:255'],
+            'contact' => ['nullable', 'array'],
+            'referrer_vin' => ['nullable', 'string', 'max:20'],
+        ];
+    }
+}

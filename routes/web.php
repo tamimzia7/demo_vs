@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\SystemTagController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Communication\CommunicationController;
 use App\Http\Controllers\Investment\ExpenseController;
 use App\Http\Controllers\Knowledge\KnowledgeItemController;
@@ -18,9 +19,19 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::middleware('guest')->group(function () {
+    Route::get('/login', [AuthenticatedSessionController::class, 'create'])
+        ->name('login');
+    Route::post('/login', [AuthenticatedSessionController::class, 'store']);
+});
+
+Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
+    ->name('logout')
+    ->middleware('auth');
+
 Route::get('/dashboard', function () {
     return view('dashboard');
-})->name('dashboard');
+})->name('dashboard')->middleware('auth');
 
 // Route::get('/offerings', function () {
 //     return view('offerings');
@@ -36,24 +47,28 @@ Route::get('/subscription', function () {
 
 Route::get('/admin', function () {
     return view('admin');
-})->name('admin');
+})->name('admin')->middleware(['auth', 'role:super_admin,company_owner']);
 
 Route::get('/settings', function () {
     return view('settings');
 })->name('settings');
 
 Route::resource('visitors', VisitorController::class)
-    ->except(['show'])
-    ->parameters(['visitors' => 'vin']);
+    ->except(['show', 'destroy'])
+    ->parameters(['visitors' => 'vin'])
+    ->middleware('auth');
 
 Route::get('visitors/{vin}/workspace', [VisitorController::class, 'workspace'])
-    ->name('visitors.workspace');
+    ->name('visitors.workspace')
+    ->middleware('auth');
 
 Route::post('visitors/{vin}/archive', [VisitorController::class, 'archive'])
-    ->name('visitors.archive');
+    ->name('visitors.archive')
+    ->middleware('auth');
 
 Route::post('visitors/{vin}/restore', [VisitorController::class, 'restore'])
-    ->name('visitors.restore');
+    ->name('visitors.restore')
+    ->middleware('auth');
 
 Route::get('visitors/{vin}/relationships', [RelationshipController::class, 'index'])
     ->name('visitors.relationships.index');
@@ -130,7 +145,7 @@ Route::get('visitors/{vin}/timeline', [TimelineController::class, 'index'])
 Route::get('visitors/{vin}/timeline/{evn}', [TimelineController::class, 'show'])
     ->name('visitors.timeline.show');
 
-Route::prefix('admin')->name('admin.')->group(function () {
+Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:super_admin,company_owner'])->group(function () {
     Route::get('/users', [UserController::class, 'index'])->name('users.index');
     Route::get('/users/create', [UserController::class, 'create'])->name('users.create');
     Route::post('/users', [UserController::class, 'store'])->name('users.store');
