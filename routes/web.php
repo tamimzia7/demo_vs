@@ -71,19 +71,24 @@ Route::post('visitors/{vin}/restore', [VisitorController::class, 'restore'])
     ->middleware('auth');
 
 Route::get('visitors/{vin}/relationships', [RelationshipController::class, 'index'])
-    ->name('visitors.relationships.index');
+    ->name('visitors.relationships.index')
+    ->middleware('auth');
 
 Route::post('visitors/{vin}/relationships', [RelationshipController::class, 'store'])
-    ->name('visitors.relationships.store');
+    ->name('visitors.relationships.store')
+    ->middleware('auth');
 
 Route::post('visitors/{vin}/relationships/transfer', [RelationshipController::class, 'transfer'])
-    ->name('visitors.relationships.transfer');
+    ->name('visitors.relationships.transfer')
+    ->middleware('auth');
 
 Route::post('visitors/{vin}/relationships/approve', [RelationshipController::class, 'approve'])
-    ->name('visitors.relationships.approve');
+    ->name('visitors.relationships.approve')
+    ->middleware('auth');
 
 Route::post('visitors/{vin}/relationships/reject', [RelationshipController::class, 'reject'])
-    ->name('visitors.relationships.reject');
+    ->name('visitors.relationships.reject')
+    ->middleware('auth');
 
 Route::get('visitors/{vin}/visits', [VisitController::class, 'index'])
     ->name('visitors.visits.index');

@@ -3,6 +3,7 @@
 namespace App\Relationships\Services;
 
 use App\Models\Relationship;
+use App\Models\TimelineEvent;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 
@@ -30,15 +31,19 @@ class RelationshipService
                     'status' => 'assigned',
                 ]);
 
-                return $existing->fresh();
+                $relationship = $existing->fresh();
+            } else {
+                $relationship = Relationship::create([
+                    'tenant_id' => $tenantId,
+                    'visitor_vin' => $visitorVin,
+                    'marketer_id' => $marketerId,
+                    'status' => 'assigned',
+                ]);
             }
 
-            return Relationship::create([
-                'tenant_id' => $tenantId,
-                'visitor_vin' => $visitorVin,
-                'marketer_id' => $marketerId,
-                'status' => 'assigned',
-            ]);
+            $this->recordEvent($relationship, 'RelationshipAssigned', 'Relationship assigned');
+
+            return $relationship->fresh();
         });
     }
 
@@ -73,6 +78,8 @@ class RelationshipService
                 'status' => 'transferred',
             ]);
 
+            $this->recordEvent($relationship, 'RelationshipTransferred', 'Relationship transferred');
+
             return $relationship->fresh();
         });
     }
@@ -98,5 +105,30 @@ class RelationshipService
     public function getMarketers(int $tenantId)
     {
         return User::where('tenant_id', $tenantId)->get();
+    }
+
+    /**
+     * Records a System-Generated Timeline Event for the relationship (BDR-016,
+     * MOD-003 §H). MOD-002 consumes these events; MOD-003 is the producer.
+     */
+    protected function recordEvent(Relationship $relationship, string $source, string $summary): void
+    {
+        TimelineEvent::create([
+            'evn' => $this->generateEvn(),
+            'tenant_id' => $relationship->tenant_id,
+            'visitor_vin' => $relationship->visitor_vin,
+            'type' => 'system',
+            'source' => $source,
+            'summary' => $summary,
+        ]);
+    }
+
+    protected function generateEvn(): string
+    {
+        $max = TimelineEvent::max('evn');
+
+        $next = $max ? ((int) substr($max, -6)) + 1 : 1;
+
+        return sprintf('EVN-%06d', $next);
     }
 }
